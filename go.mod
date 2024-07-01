@@ -1,6 +1,6 @@
 module github.com/HGV/x
 
-go 1.22.4
+go 1.22
 
 require github.com/stretchr/testify v1.9.0
 

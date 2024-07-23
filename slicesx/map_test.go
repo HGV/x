@@ -1,12 +1,13 @@
 package slicesx
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFilter(t *testing.T) {
+func TestMap(t *testing.T) {
 	type nobelPrize struct {
 		Category string
 		Laureate string
@@ -23,13 +24,19 @@ func TestFilter(t *testing.T) {
 		{Category: "Medicine", Laureate: "Julius Axelrod"},
 	}
 
-	filtered := Filter(nobelPrizes, func(n nobelPrize) bool {
-		return n.Category == "Medicine"
+	lowered := Map(nobelPrizes, func(n nobelPrize) string {
+		return strings.ToLower(n.Laureate)
 	})
 
-	assert.EqualValues(t, []nobelPrize{
-		{Category: "Medicine", Laureate: "Sir Bernard Katz"},
-		{Category: "Medicine", Laureate: "Ulf von Euler"},
-		{Category: "Medicine", Laureate: "Julius Axelrod"},
-	}, filtered)
+	assert.EqualValues(t, []string{
+		"luis leloir",
+		"paul samuelson",
+		"aleksandr solzhenitsyn",
+		"norman borlaug",
+		"hannes alfvén",
+		"louis néel",
+		"sir bernard katz",
+		"ulf von euler",
+		"julius axelrod",
+	}, lowered)
 }

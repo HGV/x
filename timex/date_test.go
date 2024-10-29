@@ -2,6 +2,7 @@ package timex
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -35,8 +36,24 @@ func TestMarshalJSON(t *testing.T) {
 }
 
 func TestUnmarshalJSON(t *testing.T) {
-	var r Date
-	err := json.Unmarshal([]byte(`"2023-05-04"`), &r)
+	var d Date
+	err := json.Unmarshal([]byte(`"2023-05-04"`), &d)
 	assert.Nil(t, err)
-	assert.Equal(t, Date{2023, 5, 4}, r)
+	assert.Equal(t, Date{2023, 5, 4}, d)
+}
+
+func TestMarshalXMLAttr(t *testing.T) {
+	type Foo struct {
+		Bar Date `xml:"bar,attr"`
+	}
+	got, err := xml.Marshal(Foo{Date{2023, 5, 4}})
+	assert.Nil(t, err)
+	assert.Equal(t, `<Foo bar="2023-05-04"></Foo>`, string(got))
+}
+
+func TestUnmarshalXML(t *testing.T) {
+	var d Date
+	err := xml.Unmarshal([]byte(`<Date>2023-05-04</Date>`), &d)
+	assert.Nil(t, err)
+	assert.Equal(t, Date{2023, 5, 4}, d)
 }

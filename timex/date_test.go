@@ -29,6 +29,54 @@ func TestParseDate(t *testing.T) {
 		}
 	}
 }
+
+func TestDateBefore(t *testing.T) {
+	tests := []struct {
+		d1, d2 Date
+		want   bool
+	}{
+		{Date{1962, 12, 31}, Date{1963, 1, 1}, true},
+		{Date{1962, 1, 1}, Date{1962, 2, 1}, true},
+		{Date{1962, 1, 1}, Date{1962, 1, 1}, false},
+		{Date{1962, 12, 30}, Date{1962, 12, 31}, true},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.d1.Before(tt.d2))
+	}
+}
+
+func TestDateAfter(t *testing.T) {
+	tests := []struct {
+		d1, d2 Date
+		want   bool
+	}{
+		{Date{1962, 12, 31}, Date{1963, 1, 1}, false},
+		{Date{1962, 1, 1}, Date{1962, 2, 1}, false},
+		{Date{1962, 1, 1}, Date{1962, 1, 1}, false},
+		{Date{1962, 12, 30}, Date{1962, 12, 31}, false},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.d1.After(tt.d2))
+	}
+}
+
+func TestDateCompare(t *testing.T) {
+	tests := []struct {
+		d1, d2 Date
+		want   int
+	}{
+		{Date{1962, 12, 31}, Date{1963, 1, 1}, -1},
+		{Date{1962, 1, 1}, Date{1962, 1, 1}, 0},
+		{Date{1962, 12, 31}, Date{1962, 12, 30}, +1},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.d1.Compare(tt.d2))
+	}
+}
+
 func TestMarshalJSON(t *testing.T) {
 	got, err := json.Marshal(Date{2023, 5, 4})
 	assert.Nil(t, err)

@@ -26,6 +26,30 @@ func ParseDate(s string) (Date, error) {
 	return NewDateFromTime(t), nil
 }
 
+func (d Date) Before(d2 Date) bool {
+	if d.Year != d2.Year {
+		return d.Year < d2.Year
+	}
+	if d.Month != d2.Month {
+		return d.Month < d2.Month
+	}
+	return d.Day < d2.Day
+}
+
+func (d Date) After(d2 Date) bool {
+	return d2.Before(d)
+}
+
+func (d Date) Compare(d2 Date) int {
+	if d.Before(d2) {
+		return -1
+	}
+	if d.After(d2) {
+		return +1
+	}
+	return 0
+}
+
 func (d Date) String() string {
 	return fmt.Sprintf("%04d-%02d-%02d", d.Year, d.Month, d.Day)
 }

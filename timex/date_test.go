@@ -30,6 +30,63 @@ func TestParseDate(t *testing.T) {
 	}
 }
 
+func TestDateArithmetic(t *testing.T) {
+	tests := []struct {
+		desc  string
+		start Date
+		end   Date
+		days  int
+	}{
+		{
+			desc:  "zero days noop",
+			start: Date{2014, 5, 9},
+			end:   Date{2014, 5, 9},
+			days:  0,
+		},
+		{
+			desc:  "crossing a year boundary",
+			start: Date{2014, 12, 31},
+			end:   Date{2015, 1, 1},
+			days:  1,
+		},
+		{
+			desc:  "negative number of days",
+			start: Date{2015, 1, 1},
+			end:   Date{2014, 12, 31},
+			days:  -1,
+		},
+		{
+			desc:  "full leap year",
+			start: Date{2004, 1, 1},
+			end:   Date{2005, 1, 1},
+			days:  366,
+		},
+		{
+			desc:  "full non-leap year",
+			start: Date{2001, 1, 1},
+			end:   Date{2002, 1, 1},
+			days:  365,
+		},
+		{
+			desc:  "crossing a leap second",
+			start: Date{1972, 6, 30},
+			end:   Date{1972, 7, 1},
+			days:  1,
+		},
+		{
+			desc:  "dates before the unix epoch",
+			start: Date{101, 1, 1},
+			end:   Date{102, 1, 1},
+			days:  365,
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.end, tt.start.AddDays(tt.days), tt.desc)
+		assert.Equal(t, tt.days, tt.end.DaysSince(tt.start), tt.desc)
+	}
+}
+
 func TestDateBefore(t *testing.T) {
 	tests := []struct {
 		d1, d2 Date

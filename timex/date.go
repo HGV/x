@@ -26,6 +26,21 @@ func ParseDate(s string) (Date, error) {
 	return NewDateFromTime(t), nil
 }
 
+func (d Date) In(loc *time.Location) time.Time {
+	return time.Date(d.Year, d.Month, d.Day, 0, 0, 0, 0, loc)
+}
+
+func (d Date) AddDays(n int) Date {
+	return NewDateFromTime(d.In(time.UTC).AddDate(0, 0, n))
+}
+
+func (d Date) DaysSince(s Date) (days int) {
+	// We convert to Unix time so we do not have to worry about leap seconds:
+	// Unix time increases by exactly 86400 seconds per day.
+	deltaUnix := d.In(time.UTC).Unix() - s.In(time.UTC).Unix()
+	return int(deltaUnix / 86400)
+}
+
 func (d Date) Before(d2 Date) bool {
 	if d.Year != d2.Year {
 		return d.Year < d2.Year

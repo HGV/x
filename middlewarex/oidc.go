@@ -20,9 +20,7 @@ type (
 	oidcContextKey int
 )
 
-const (
-	idTokenContextKey oidcContextKey = iota
-)
+const idTokenContextKey oidcContextKey = iota
 
 func OIDC(ctx context.Context, issuer string, opts ...OIDCMiddlewareOption) func(next http.Handler) http.Handler {
 	provider, err := oidc.NewProvider(ctx, issuer)
@@ -69,11 +67,9 @@ func contextWithIDToken(ctx context.Context, idToken *oidc.IDToken) context.Cont
 	return context.WithValue(ctx, idTokenContextKey, idToken)
 }
 
-func IDTokenFromContext(ctx context.Context) *oidc.IDToken {
-	if idToken, ok := ctx.Value(idTokenContextKey).(*oidc.IDToken); ok {
-		return idToken
-	}
-	return nil
+func IDTokenFromContext(ctx context.Context) (idToken *oidc.IDToken, ok bool) {
+	idToken, ok = ctx.Value(idTokenContextKey).(*oidc.IDToken)
+	return
 }
 
 func validateAuthHeader(s, scheme string) (string, bool) {

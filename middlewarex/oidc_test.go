@@ -15,26 +15,26 @@ func TestValidateAuthHeader(t *testing.T) {
 		authHeader    string
 		scheme        string
 		expectedToken string
-		expectedOk    bool
+		expectedOK    bool
 	}{
 		{
 			authHeader: "", scheme: "bearer",
-			expectedToken: "", expectedOk: false,
+			expectedToken: "", expectedOK: false,
 		},
 		{
 			authHeader: "bearer token", scheme: "bearer ",
-			expectedToken: "token", expectedOk: true,
+			expectedToken: "token", expectedOK: true,
 		},
 		{
 			authHeader: "BEARER token", scheme: "bearer ",
-			expectedToken: "token", expectedOk: true,
+			expectedToken: "token", expectedOK: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
 			token, ok := validateAuthHeader(tt.authHeader, tt.scheme)
-			assert.Equal(t, tt.expectedOk, ok)
+			assert.Equal(t, tt.expectedOK, ok)
 			assert.Equal(t, tt.expectedToken, token)
 		})
 	}
@@ -43,7 +43,9 @@ func TestValidateAuthHeader(t *testing.T) {
 func TestHandler(t *testing.T) {
 	issuer := "https://api.accounts.hgv.it"
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.NotNil(t, IDTokenFromContext(r.Context()))
+		idToken, ok := IDTokenFromContext(r.Context())
+		assert.True(t, ok)
+		assert.NotNil(t, idToken)
 		w.WriteHeader(http.StatusTeapot)
 	})
 

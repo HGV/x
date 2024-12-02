@@ -4,6 +4,8 @@ import (
 	"encoding"
 	"fmt"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Date struct {
@@ -81,3 +83,18 @@ func (d *Date) UnmarshalText(data []byte) error {
 
 var _ encoding.TextMarshaler = Date{}
 var _ encoding.TextUnmarshaler = &Date{}
+
+func (d *Date) ScanDate(v pgtype.Date) error {
+	d.Year, d.Month, d.Day = v.Time.Date()
+	return nil
+}
+
+func (d Date) DateValue() (pgtype.Date, error) {
+	return pgtype.Date{
+		Time:  d.In(time.UTC),
+		Valid: true,
+	}, nil
+}
+
+var _ pgtype.DateScanner = &Date{}
+var _ pgtype.DateValuer = Date{}

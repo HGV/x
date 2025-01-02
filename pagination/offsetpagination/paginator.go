@@ -1,34 +1,37 @@
 package offsetpagination
 
 import (
-	"net/http"
+	"errors"
+	"net/url"
 	"strconv"
 )
 
 const (
-	defaultPageSize int = 100
+	defaultPageSize int = 20
+	maxPageSize     int = 100
 )
 
 type (
+	Paged interface {
+		Offset() int
+		Limit() int
+	}
 	Paginator[T any] struct {
-		page                  int
-		pageSize, maxPageSize int
+		page     int
+		pageSize int
 	}
 	Result[T any] struct {
-		Items    []T  `json:"items"`
-		NextPage *int `json:"next_page,omitempty"`
+		Items    []T `json:"items"`
+		NextPage int `json:"next_page,omitempty"`
 	}
-	Option[T any] func(*Paginator[T])
 )
 
-func New[T any](page, pageSize int, opts ...Option[T]) Paginator[T] {
+var _ Paged = new(Paginator[any])
+
+func New[T any](page, pageSize int) Paginator[T] {
 	p := Paginator[T]{
 		page:     page,
 		pageSize: pageSize,
-	}
-
-	for _, opt := range opts {
-		opt(&p)
 	}
 
 	if p.page <= 0 {
@@ -37,8 +40,8 @@ func New[T any](page, pageSize int, opts ...Option[T]) Paginator[T] {
 	if p.pageSize <= 0 {
 		p.pageSize = defaultPageSize
 	}
-	if p.maxPageSize > 0 && p.pageSize > p.maxPageSize {
-		p.pageSize = p.maxPageSize
+	if p.pageSize > maxPageSize {
+		p.pageSize = maxPageSize
 	}
 
 	return p
@@ -54,10 +57,9 @@ func (p *Paginator[T]) Limit() int {
 
 func (p *Paginator[T]) Paginate(items []T) Result[T] {
 	if len(items) > p.pageSize {
-		nextPage := p.page + 1
 		return Result[T]{
 			Items:    items[:p.pageSize],
-			NextPage: &nextPage,
+			NextPage: p.page + 1,
 		}
 	}
 	return Result[T]{
@@ -65,15 +67,41 @@ func (p *Paginator[T]) Paginate(items []T) Result[T] {
 	}
 }
 
-func Parse[T any](r *http.Request, opts ...Option[T]) Paginator[T] {
-	q := r.URL.Query()
-	page, _ := strconv.Atoi(q.Get("page"))
-	pageSize, _ := strconv.Atoi(q.Get("page_size"))
-	return New[T](page, pageSize, opts...)
+func (r Result[T]) HasNextPage() bool {
+	return r.NextPage > 0
 }
 
-func WithMaxPageSize[T any](maxPageSize int) Option[T] {
-	return func(opt *Paginator[T]) {
-		opt.maxPageSize = maxPageSize
+var (
+	ErrInvalidPage      = errors.New("query parameter `page` must be an integer, got string")
+	ErrPageTooSmall     = errors.New("query parameter `page` must be greater than 0")
+	ErrInvalidPageSize  = errors.New("query parameter `page_size` must be an integer, got string")
+	ErrPageSizeTooSmall = errors.New("query parameter `page_size` must be greater than 0")
+)
+
+func Parse[T any](q url.Values) (*Paginator[T], error) {
+	var page, pageSize int
+	var err error
+
+	if pageParam := q.Get("page"); pageParam != "" {
+		page, err = strconv.Atoi(pageParam)
+		if err != nil {
+			return nil, ErrInvalidPage
+		}
+		if page <= 0 {
+			return nil, ErrPageTooSmall
+		}
 	}
+
+	if pageSizeParam := q.Get("page_size"); pageSizeParam != "" {
+		pageSize, err = strconv.Atoi(pageSizeParam)
+		if err != nil {
+			return nil, ErrInvalidPageSize
+		}
+		if pageSize <= 0 {
+			return nil, ErrPageSizeTooSmall
+		}
+	}
+
+	p := New[T](page, pageSize)
+	return &p, nil
 }

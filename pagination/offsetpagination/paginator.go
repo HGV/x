@@ -47,15 +47,15 @@ func New[T any](page, pageSize int) Paginator[T] {
 	return p
 }
 
-func (p *Paginator[T]) Offset() int {
+func (p Paginator[T]) Offset() int {
 	return (p.page - 1) * p.pageSize
 }
 
-func (p *Paginator[T]) Limit() int {
+func (p Paginator[T]) Limit() int {
 	return p.pageSize + 1
 }
 
-func (p *Paginator[T]) Paginate(items []T) Result[T] {
+func (p Paginator[T]) Paginate(items []T) Result[T] {
 	if len(items) > p.pageSize {
 		return Result[T]{
 			Items:    items[:p.pageSize],

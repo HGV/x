@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultPageSize int = 20
+	defaultPageSize int = 50
 	maxPageSize     int = 100
 )
 
@@ -73,9 +73,9 @@ func (r Result[T]) HasNextPage() bool {
 
 var (
 	ErrInvalidPage      = errors.New("query parameter `page` must be an integer, got string")
-	ErrPageTooSmall     = errors.New("query parameter `page` must be greater than 0")
+	ErrPageTooSmall     = errors.New("query parameter `page` must be non-negative")
 	ErrInvalidPageSize  = errors.New("query parameter `page_size` must be an integer, got string")
-	ErrPageSizeTooSmall = errors.New("query parameter `page_size` must be greater than 0")
+	ErrPageSizeTooSmall = errors.New("query parameter `page_size` must be non-negative")
 )
 
 func Parse[T any](q url.Values) (*Paginator[T], error) {

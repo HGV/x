@@ -71,13 +71,6 @@ func (r Result[T]) HasNextPage() bool {
 	return r.NextPage > 0
 }
 
-var (
-	ErrInvalidPage      = errors.New("query parameter `page` must be an integer, got string")
-	ErrPageTooSmall     = errors.New("query parameter `page` must be non-negative")
-	ErrInvalidPageSize  = errors.New("query parameter `page_size` must be an integer, got string")
-	ErrPageSizeTooSmall = errors.New("query parameter `page_size` must be non-negative")
-)
-
 func Parse[T any](q url.Values) (*Paginator[T], error) {
 	var page, pageSize int
 	var err error
@@ -85,20 +78,20 @@ func Parse[T any](q url.Values) (*Paginator[T], error) {
 	if pageParam := q.Get("page"); pageParam != "" {
 		page, err = strconv.Atoi(pageParam)
 		if err != nil {
-			return nil, ErrInvalidPage
+			return nil, errors.New("query parameter `page` must be an integer, got string")
 		}
 		if page <= 0 {
-			return nil, ErrPageTooSmall
+			return nil, errors.New("query parameter `page` must be non-negative")
 		}
 	}
 
 	if pageSizeParam := q.Get("page_size"); pageSizeParam != "" {
 		pageSize, err = strconv.Atoi(pageSizeParam)
 		if err != nil {
-			return nil, ErrInvalidPageSize
+			return nil, errors.New("query parameter `page_size` must be an integer, got string")
 		}
 		if pageSize <= 0 {
-			return nil, ErrPageSizeTooSmall
+			return nil, errors.New("query parameter `page_size` must be non-negative")
 		}
 	}
 

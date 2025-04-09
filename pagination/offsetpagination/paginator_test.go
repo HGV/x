@@ -80,7 +80,7 @@ func TestPaginate(t *testing.T) {
 	p := New[int](1, 75)
 
 	items := make([]int, 1000)
-	for i := 0; i < len(items); i++ {
+	for i := range items {
 		items[i] = i
 	}
 

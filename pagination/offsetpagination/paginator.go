@@ -55,6 +55,10 @@ func (p Paginator[T]) Limit() int {
 	return p.pageSize + 1
 }
 
+func (p Paginator[T]) Page() int {
+	return p.page
+}
+
 func (p Paginator[T]) Paginate(items []T) Result[T] {
 	if len(items) > p.pageSize {
 		return Result[T]{

@@ -1,6 +1,6 @@
 module github.com/HGV/x
 
-go 1.22
+go 1.24
 
 require (
 	github.com/jackc/pgx/v5 v5.7.2

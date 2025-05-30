@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,6 +29,11 @@ func TestParseDate(t *testing.T) {
 			assert.NotNil(t, err)
 		}
 	}
+}
+
+func TestDateWeekday(t *testing.T) {
+	d := NewDateFromTime(time.Date(2024, time.December, 25, 0, 0, 0, 0, time.UTC))
+	assert.Equal(t, time.Wednesday, d.Weekday())
 }
 
 func TestDateArithmetic(t *testing.T) {

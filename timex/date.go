@@ -28,6 +28,10 @@ func ParseDate(s string) (Date, error) {
 	return NewDateFromTime(t), nil
 }
 
+func Today() Date {
+	return NewDateFromTime(time.Now())
+}
+
 func (d Date) Weekday() time.Weekday {
 	return d.In(time.UTC).Weekday()
 }

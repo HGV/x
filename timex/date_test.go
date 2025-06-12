@@ -31,6 +31,10 @@ func TestParseDate(t *testing.T) {
 	}
 }
 
+func TestToday(t *testing.T) {
+	assert.Equal(t, NewDateFromTime(time.Now()), Today())
+}
+
 func TestDateWeekday(t *testing.T) {
 	d := NewDateFromTime(time.Date(2024, time.December, 25, 0, 0, 0, 0, time.UTC))
 	assert.Equal(t, time.Wednesday, d.Weekday())

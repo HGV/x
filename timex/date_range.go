@@ -21,7 +21,7 @@ func (d *DateRange) ScanBounds() (lowerTarget, upperTarget any) {
 
 func (d *DateRange) SetBoundTypes(lower, upper pgtype.BoundType) error {
 	if lower == pgtype.Exclusive {
-		d.Start = d.Start.AddDays(-1)
+		d.Start = d.Start.AddDays(1)
 	}
 	if upper == pgtype.Exclusive {
 		d.End = d.End.AddDays(-1)

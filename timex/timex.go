@@ -8,11 +8,6 @@ const (
 	Day time.Duration = 24 * time.Hour
 )
 
-// Deprecated: timex.GenerateSeries is deprecated. Use timex.MakeTimeSeries instead.
-func GenerateSeries(start, stop time.Time, interval time.Duration) []time.Time {
-	return MakeTimeSeries(start, stop, interval)
-}
-
 func MakeTimeSeries(start, stop time.Time, interval time.Duration) []time.Time {
 	if start.After(stop) || interval <= 0 {
 		return nil

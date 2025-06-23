@@ -42,7 +42,7 @@ func NewMiddleware(ctx context.Context, issuer string, opts ...MiddlewareOption)
 		opt(o)
 	}
 
-	mw := Middleware{
+	return &Middleware{
 		o: o,
 		v: provider.VerifierContext(ctx, &oidc.Config{
 			ClientID:                   o.ClientID,
@@ -50,8 +50,6 @@ func NewMiddleware(ctx context.Context, issuer string, opts ...MiddlewareOption)
 			InsecureSkipSignatureCheck: o.InsecureSkipSignatureCheck,
 		}),
 	}
-
-	return &mw
 }
 
 func (mw *Middleware) Handler(next http.Handler) http.Handler {

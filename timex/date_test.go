@@ -144,6 +144,23 @@ func TestDateCompare(t *testing.T) {
 	}
 }
 
+func TestDateIsZero(t *testing.T) {
+	tests := []struct {
+		date Date
+		want bool
+	}{
+		{Date{1962, 1, 50}, false},
+		{Date{10000, 12, 31}, false},
+		{Date{-1, 0, 0}, false},
+		{Date{0, 0, 0}, true},
+		{Date{}, true},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.date.IsZero())
+	}
+}
+
 func TestMarshalJSON(t *testing.T) {
 	got, err := json.Marshal(Date{2023, 5, 4})
 	assert.Nil(t, err)

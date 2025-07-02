@@ -75,7 +75,14 @@ func (d Date) Compare(d2 Date) int {
 	return 0
 }
 
+func (d Date) IsZero() bool {
+	return d == Date{}
+}
+
 func (d Date) String() string {
+	if d.IsZero() {
+		return ""
+	}
 	return fmt.Sprintf("%04d-%02d-%02d", d.Year, d.Month, d.Day)
 }
 

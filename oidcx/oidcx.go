@@ -1,6 +1,6 @@
 package oidcx
 
-type Issuer string
+type Issuer = string
 
 const (
 	GoogleIssuer Issuer = "https://accounts.google.com"

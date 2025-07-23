@@ -189,3 +189,12 @@ func TestUnmarshalXML(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, Date{2023, 5, 4}, d)
 }
+
+func TestMarshalXMLPtrAttr(t *testing.T) {
+	type Foo struct {
+		Bar *Date `xml:"bar,attr,omitempty"`
+	}
+	got, err := xml.Marshal(Foo{})
+	assert.Nil(t, err)
+	assert.Equal(t, `<Foo></Foo>`, string(got))
+}

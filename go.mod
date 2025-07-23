@@ -1,10 +1,13 @@
 module github.com/HGV/x
 
-go 1.24
+go 1.24.0
+
+toolchain go1.24.5
 
 require (
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/jackc/pgx/v5 v5.7.5
+	github.com/ory/client-go v1.20.23
 	github.com/stretchr/testify v1.10.0
 )
 

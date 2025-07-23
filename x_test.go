@@ -29,3 +29,26 @@ func TestPtrEqual(t *testing.T) {
 		})
 	}
 }
+
+func TestIsHGVEmployee(t *testing.T) {
+	tests := []struct {
+		email    string
+		expected bool
+	}{
+		{"user@hgv.it", true},
+		{"user@hgj.it", true},
+		{"User@HGV.it", true}, // case-insensitive check
+		{"User@HGJ.it", true}, // case-insensitive check
+		{"user@example.com", false},
+		{"@hgv.it", true},
+		{"someone@fakehgv.it", false}, // suffix match only
+		{"employee@hgv.com", false},
+		{"employee@hgv.its", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.email, func(t *testing.T) {
+			assert.Equal(t, tt.expected, IsHGVEmployee(tt.email))
+		})
+	}
+}

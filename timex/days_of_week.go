@@ -3,6 +3,7 @@ package timex
 import (
 	"cmp"
 	"errors"
+	"time"
 
 	"github.com/HGV/x/cmpx"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -26,6 +27,27 @@ func ParseDaysOfWeek(s []bool) (*DaysOfWeek, error) {
 		Sa: s[5],
 		Su: s[6],
 	}, nil
+}
+
+func (w DaysOfWeek) Has(weekday time.Weekday) bool {
+	switch weekday {
+	case time.Monday:
+		return w.Mo
+	case time.Tuesday:
+		return w.Tu
+	case time.Wednesday:
+		return w.We
+	case time.Thursday:
+		return w.Th
+	case time.Friday:
+		return w.Fr
+	case time.Saturday:
+		return w.Sa
+	case time.Sunday:
+		return w.Su
+	default:
+		return false
+	}
 }
 
 func (w DaysOfWeek) DaysOfWeek() []bool {

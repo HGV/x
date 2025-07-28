@@ -2,6 +2,8 @@ package timex
 
 import (
 	"testing"
+	"testing/quick"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
@@ -16,6 +18,54 @@ func TestParseDaysOfWeek(t *testing.T) {
 	invalid := []bool{true, false}
 	_, err = ParseDaysOfWeek(invalid)
 	assert.Error(t, err)
+}
+
+func TestHas_PropertyBased(t *testing.T) {
+	f := func(mo, tu, we, th, fr, sa, su bool) bool {
+		dow := DaysOfWeek{Mo: mo, Tu: tu, We: we, Th: th, Fr: fr, Sa: sa, Su: su}
+		want := []bool{su, mo, tu, we, th, fr, sa}
+		for i, expected := range want {
+			actual := dow.Has(time.Weekday(i))
+			if actual != expected {
+				return false
+			}
+		}
+		return true
+	}
+	assert.NoError(t, quick.Check(f, nil))
+}
+
+func TestHas_InvalidWeekday(t *testing.T) {
+	var dow DaysOfWeek
+	assert.False(t, dow.Has(time.Weekday(8)))
+}
+
+func TestHas_ValidWeekdays(t *testing.T) {
+	tests := []struct {
+		name string
+		dow  DaysOfWeek
+		want []bool
+	}{
+		{
+			name: "all false",
+			dow:  DaysOfWeek{},
+			want: []bool{false, false, false, false, false, false, false},
+		},
+		{
+			name: "all true",
+			dow:  DaysOfWeek{Mo: true, Tu: true, We: true, Th: true, Fr: true, Sa: true, Su: true},
+			want: []bool{true, true, true, true, true, true, true},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for i, expected := range tt.want {
+				actual := tt.dow.Has(time.Weekday(i))
+				assert.Equal(t, actual, expected)
+			}
+		})
+	}
 }
 
 func TestDaysOfWeek_BitsConversion(t *testing.T) {

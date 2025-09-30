@@ -3,7 +3,7 @@ module github.com/HGV/x
 go 1.24.0
 
 require (
-	github.com/coreos/go-oidc/v3 v3.15.0
+	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/ory/client-go v1.22.3
 	github.com/stretchr/testify v1.11.1

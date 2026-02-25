@@ -85,6 +85,7 @@ func TestHandler(t *testing.T) {
 			}),
 			WithSkipClientIDCheck(),
 			withInsecureSkipSignatureCheck(),
+			withSupportedSigningAlgs([]string{"HS256"}),
 		).Handler(next)
 		w := makeRequest(h, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiaXNzIjoiaHR0cHM6Ly9hcGkuYWNjb3VudHMuaGd2Lml0IiwiaWF0IjoxNjAwMDAwMDAwLCJleHAiOjIwMDAwMDAwMDB9.hJREizNgcJpnEEyZ5lE5VC9tPY45JIFJoxm9ZlIPgTI")
 		b, _ := io.ReadAll(w.Body)
@@ -101,6 +102,7 @@ func TestHandler(t *testing.T) {
 			WithSkipClientIDCheck(),
 			WithEmail("test@hgv.it"),
 			withInsecureSkipSignatureCheck(),
+			withSupportedSigningAlgs([]string{"HS256"}),
 		).Handler(next)
 		w := makeRequest(h, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiaXNzIjoiaHR0cHM6Ly9hcGkuYWNjb3VudHMuaGd2Lml0IiwiaWF0IjoxNjAwMDAwMDAwLCJleHAiOjIwMDAwMDAwMDB9.hJREizNgcJpnEEyZ5lE5VC9tPY45JIFJoxm9ZlIPgTI")
 		b, _ := io.ReadAll(w.Body)
@@ -112,6 +114,7 @@ func TestHandler(t *testing.T) {
 			WithSkipClientIDCheck(),
 			WithSkipEmailCheck(),
 			withInsecureSkipSignatureCheck(),
+			withSupportedSigningAlgs([]string{"HS256"}),
 		).Handler(next)
 		w := makeRequest(h, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiaXNzIjoiaHR0cHM6Ly9hcGkuYWNjb3VudHMuaGd2Lml0IiwiaWF0IjoxNjAwMDAwMDAwLCJleHAiOjIwMDAwMDAwMDB9.hJREizNgcJpnEEyZ5lE5VC9tPY45JIFJoxm9ZlIPgTI")
 		assert.Equal(t, http.StatusTeapot, w.Code)

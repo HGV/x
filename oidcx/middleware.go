@@ -21,6 +21,7 @@ type middlewareOptions struct {
 	Email                      string
 	SkipEmailCheck             bool
 	InsecureSkipSignatureCheck bool
+	SupportedSigningAlgs       []string
 	AuthFailedHandler          func(error) http.HandlerFunc
 }
 
@@ -48,6 +49,7 @@ func NewMiddleware(ctx context.Context, issuer string, opts ...MiddlewareOption)
 			ClientID:                   o.ClientID,
 			SkipClientIDCheck:          o.SkipClientIDCheck,
 			InsecureSkipSignatureCheck: o.InsecureSkipSignatureCheck,
+			SupportedSigningAlgs:       o.SupportedSigningAlgs,
 		}),
 	}
 }
@@ -133,6 +135,12 @@ func WithSkipEmailCheck() MiddlewareOption {
 func withInsecureSkipSignatureCheck() MiddlewareOption {
 	return func(o *middlewareOptions) {
 		o.InsecureSkipSignatureCheck = true
+	}
+}
+
+func withSupportedSigningAlgs(algs []string) MiddlewareOption {
+	return func(o *middlewareOptions) {
+		o.SupportedSigningAlgs = algs
 	}
 }
 

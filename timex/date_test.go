@@ -35,6 +35,132 @@ func TestToday(t *testing.T) {
 	assert.Equal(t, NewDateFromTime(time.Now()), Today())
 }
 
+func TestNewDate(t *testing.T) {
+	d := NewDate(2024, time.March, 15)
+	assert.Equal(t, 2024, d.Year)
+	assert.Equal(t, time.March, d.Month)
+	assert.Equal(t, 15, d.Day)
+}
+
+func TestDateAddMonths(t *testing.T) {
+	tests := []struct {
+		desc   string
+		start  Date
+		months int
+		want   Date
+	}{
+		{
+			desc:   "add zero months",
+			start:  Date{2024, 5, 15},
+			months: 0,
+			want:   Date{2024, 5, 15},
+		},
+		{
+			desc:   "add months within year",
+			start:  Date{2024, 3, 15},
+			months: 2,
+			want:   Date{2024, 5, 15},
+		},
+		{
+			desc:   "add months crossing year boundary",
+			start:  Date{2024, 11, 15},
+			months: 3,
+			want:   Date{2025, 2, 15},
+		},
+		{
+			desc:   "subtract months",
+			start:  Date{2024, 3, 15},
+			months: -2,
+			want:   Date{2024, 1, 15},
+		},
+		{
+			desc:   "end of month overflow (Jan 31 + 1 month)",
+			start:  Date{2024, 1, 31},
+			months: 1,
+			want:   Date{2024, 3, 2}, // Feb has 29 days in 2024, so 31-29=2 -> March 2
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.start.AddMonths(tt.months), tt.desc)
+	}
+}
+
+func TestDateAddYears(t *testing.T) {
+	tests := []struct {
+		desc  string
+		start Date
+		years int
+		want  Date
+	}{
+		{
+			desc:  "add zero years",
+			start: Date{2024, 5, 15},
+			years: 0,
+			want:  Date{2024, 5, 15},
+		},
+		{
+			desc:  "add years",
+			start: Date{2024, 5, 15},
+			years: 3,
+			want:  Date{2027, 5, 15},
+		},
+		{
+			desc:  "subtract years",
+			start: Date{2024, 5, 15},
+			years: -10,
+			want:  Date{2014, 5, 15},
+		},
+		{
+			desc:  "leap day to non-leap year",
+			start: Date{2024, 2, 29},
+			years: 1,
+			want:  Date{2025, 3, 1}, // Feb 29 doesn't exist in 2025
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.start.AddYears(tt.years), tt.desc)
+	}
+}
+
+func TestDateAddDate(t *testing.T) {
+	tests := []struct {
+		desc   string
+		start  Date
+		years  int
+		months int
+		days   int
+		want   Date
+	}{
+		{
+			desc:  "add nothing",
+			start: Date{2024, 5, 15},
+			want:  Date{2024, 5, 15},
+		},
+		{
+			desc:   "add all components",
+			start:  Date{2024, 1, 1},
+			years:  1,
+			months: 2,
+			days:   3,
+			want:   Date{2025, 3, 4},
+		},
+		{
+			desc:   "subtract all components",
+			start:  Date{2024, 6, 15},
+			years:  -1,
+			months: -2,
+			days:   -5,
+			want:   Date{2023, 4, 10},
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, tt.start.AddDate(tt.years, tt.months, tt.days), tt.desc)
+	}
+}
+
 func TestDateWeekday(t *testing.T) {
 	d := NewDateFromTime(time.Date(2024, time.December, 25, 0, 0, 0, 0, time.UTC))
 	assert.Equal(t, time.Wednesday, d.Weekday())

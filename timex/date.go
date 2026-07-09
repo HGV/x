@@ -14,6 +14,14 @@ type Date struct {
 	Day   int
 }
 
+func NewDate(year int, month time.Month, day int) Date {
+	return Date{
+		Year:  year,
+		Month: month,
+		Day:   day,
+	}
+}
+
 func NewDateFromTime(t time.Time) Date {
 	var d Date
 	d.Year, d.Month, d.Day = t.Date()
@@ -42,6 +50,18 @@ func (d Date) In(loc *time.Location) time.Time {
 
 func (d Date) AddDays(n int) Date {
 	return NewDateFromTime(d.In(time.UTC).AddDate(0, 0, n))
+}
+
+func (d Date) AddMonths(n int) Date {
+	return NewDateFromTime(d.In(time.UTC).AddDate(0, n, 0))
+}
+
+func (d Date) AddYears(n int) Date {
+	return NewDateFromTime(d.In(time.UTC).AddDate(n, 0, 0))
+}
+
+func (d Date) AddDate(years int, months int, days int) Date {
+	return NewDateFromTime(d.In(time.UTC).AddDate(years, months, days))
 }
 
 func (d Date) DaysSince(s Date) (days int) {

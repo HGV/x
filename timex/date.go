@@ -49,15 +49,15 @@ func (d Date) In(loc *time.Location) time.Time {
 }
 
 func (d Date) AddDays(n int) Date {
-	return NewDateFromTime(d.In(time.UTC).AddDate(0, 0, n))
+	return d.AddDate(0, 0, n)
 }
 
 func (d Date) AddMonths(n int) Date {
-	return NewDateFromTime(d.In(time.UTC).AddDate(0, n, 0))
+	return d.AddDate(0, n, 0)
 }
 
 func (d Date) AddYears(n int) Date {
-	return NewDateFromTime(d.In(time.UTC).AddDate(n, 0, 0))
+	return d.AddDate(n, 0, 0)
 }
 
 func (d Date) AddDate(years int, months int, days int) Date {
